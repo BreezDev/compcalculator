@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}My Sales · Compass Commission Hub{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h3 fw-bold">My Sales</h1>
+        <p class="text-muted mb-0">A complete view of your production history with export-ready data.</p>
+    </div>
+    <div class="d-flex gap-3 mt-3 mt-md-0">
+        <a class="btn btn-outline-light" href="{{ url_for('commission_calculator') }}">Commission Calculator</a>
+        <a class="btn btn-primary" href="{{ url_for('export_my_sales') }}">Export to Excel</a>
+    </div>
+</div>
+
+<div class="table-responsive glass-card p-0">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Client</th>
+                <th scope="col">Date Sold</th>
+                <th scope="col">Effective</th>
+                <th scope="col">Category</th>
+                <th scope="col">Premium</th>
+                <th scope="col">FS Monthly Premium</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if sales %}
+                {% for sale in sales %}
+                    <tr>
+                        <td>{{ sale.client_name }}</td>
+                        <td>{{ sale.date_sold.strftime('%b %d, %Y') }}</td>
+                        <td>{{ sale.date_effective.strftime('%b %d, %Y') }}</td>
+                        <td><span class="badge rounded-pill bg-category">{{ categories[sale.category] }}</span></td>
+                        <td>${{ '%.2f'|format(sale.premium) }}</td>
+                        <td>{% if sale.fs_monthly_premium %}${{ '%.2f'|format(sale.fs_monthly_premium) }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <div class="text-muted">No sales recorded yet. <a href="{{ url_for('enter_sale') }}">Add your first sale.</a></div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Compass Commission Hub{% endblock %}
+{% block content %}
+<section class="landing-hero text-light py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-7">
+            <h1 class="display-4 fw-bold mb-3">Track, Celebrate, and Forecast Your Team's Wins</h1>
+            <p class="lead opacity-75 mb-4">Compass Commission Hub keeps your sales organization aligned with real-time production tracking, powerful analytics, and a commission engine designed for your exact plan.</p>
+            <div class="d-flex flex-wrap gap-3">
+                {% if current_user.is_authenticated %}
+                    <a href="{{ url_for('enter_sale') }}" class="btn btn-primary btn-lg">Record a Sale</a>
+                    <a href="{{ url_for('team_sales') }}" class="btn btn-outline-light btn-lg">View Team Insights</a>
+                {% else %}
+                    <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Join the Team</a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-light btn-lg">Log In</a>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-lg-5 mt-5 mt-lg-0">
+            <div class="glass-card p-4">
+                <h2 class="h4 text-uppercase text-primary fw-semibold">Why Teams Love Compass</h2>
+                <ul class="list-unstyled mt-4 mb-0 landing-benefits">
+                    <li><span class="icon">📈</span> Beautiful dashboards with interactive charts</li>
+                    <li><span class="icon">📝</span> Guided workflow to log every sale detail</li>
+                    <li><span class="icon">💡</span> Commission calculator tailored to your comp plan</li>
+                    <li><span class="icon">📤</span> One-click exports to polished Excel workbooks</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4">
+                <h3 class="h5 fw-semibold">Collaborative Team View</h3>
+                <p class="opacity-75">Filter results by date range, visualize production by category, and celebrate top performers all in one space.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4">
+                <h3 class="h5 fw-semibold">Powerful Personal Insights</h3>
+                <p class="opacity-75">Review your sales in a streamlined grid, export your activity, and stay ahead of your monthly targets.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card h-100 p-4">
+                <h3 class="h5 fw-semibold">Compensation Confidence</h3>
+                <p class="opacity-75">Know exactly where you stand with automated commission and bonus tracking—no spreadsheets required.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

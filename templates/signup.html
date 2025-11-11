@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Create Account · Compass Commission Hub{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="glass-card p-4 p-lg-5">
+            <h1 class="h3 fw-bold mb-3 text-center">Create Your Team Login</h1>
+            <p class="text-muted text-center">Choose a unique username and confirm the shared team password to activate your access.</p>
+            <form method="post" class="mt-4">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control form-control-lg" id="username" name="username" required placeholder="e.g. alexis">
+                </div>
+                <div class="mb-4">
+                    <label for="confirmation" class="form-label">Confirm Team Password</label>
+                    <input type="password" class="form-control form-control-lg" id="confirmation" name="confirmation" required value="{{ default_password }}">
+                    <div class="form-text">All teammates start with the default password <strong>{{ default_password }}</strong>. You can update it later within the database if needed.</div>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Create account</button>
+                </div>
+            </form>
+            <div class="text-center mt-4">
+                <small class="text-muted">Already registered? <a href="{{ url_for('login') }}">Log in instead</a>.</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

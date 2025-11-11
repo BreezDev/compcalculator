@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Team Sales · Compass Commission Hub{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h3 fw-bold">Team Sales Performance</h1>
+        <p class="text-muted mb-0">Filter by timeframe, visualize production, and export a beautifully formatted workbook.</p>
+    </div>
+    <div class="d-flex gap-3 mt-3 mt-md-0">
+        <a class="btn btn-outline-light" href="{{ url_for('commission_calculator') }}">Commission Calculator</a>
+        <a class="btn btn-primary" href="{{ url_for('export_team_sales', start_date=start_date, end_date=end_date) }}">Export Team Excel</a>
+    </div>
+</div>
+
+<form method="get" class="glass-card p-4 mb-4 row g-3 align-items-end">
+    <div class="col-md-4">
+        <label for="start_date" class="form-label">Start date</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}">
+    </div>
+    <div class="col-md-4">
+        <label for="end_date" class="form-label">End date</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}">
+    </div>
+    <div class="col-md-4 d-grid d-md-flex gap-2 justify-content-md-end">
+        <a class="btn btn-outline-light" href="{{ url_for('team_sales') }}">Clear</a>
+        <button type="submit" class="btn btn-primary">Apply Filters</button>
+    </div>
+</form>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <h2 class="h5 fw-semibold mb-3">Production by Category</h2>
+            <canvas id="categoryChart" height="250"></canvas>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="glass-card p-4 h-100">
+            <h2 class="h5 fw-semibold mb-3">Premium by Month</h2>
+            <canvas id="monthlyChart" height="250"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive glass-card p-0">
+    <table class="table table-hover align-middle mb-0">
+        <thead class="table-dark">
+            <tr>
+                <th scope="col">Team Member</th>
+                <th scope="col">Client</th>
+                <th scope="col">Date Sold</th>
+                <th scope="col">Effective</th>
+                <th scope="col">Category</th>
+                <th scope="col">Premium</th>
+                <th scope="col">FS Monthly Premium</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if sales %}
+                {% for sale in sales %}
+                    <tr>
+                        <td class="fw-semibold">{{ sale.user.username }}</td>
+                        <td>{{ sale.client_name }}</td>
+                        <td>{{ sale.date_sold.strftime('%b %d, %Y') }}</td>
+                        <td>{{ sale.date_effective.strftime('%b %d, %Y') }}</td>
+                        <td><span class="badge rounded-pill bg-category">{{ categories[sale.category] }}</span></td>
+                        <td>${{ '%.2f'|format(sale.premium) }}</td>
+                        <td>{% if sale.fs_monthly_premium %}${{ '%.2f'|format(sale.fs_monthly_premium) }}{% else %}<span class="text-muted">—</span>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <div class="text-muted">No sales match the selected filters yet. Try expanding the date range.</div>
+                    </td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    const chartData = {{ chart_data|safe }};
+    const categoryCtx = document.getElementById('categoryChart');
+    const monthlyCtx = document.getElementById('monthlyChart');
+
+    const categoryChart = new Chart(categoryCtx, {
+        type: 'bar',
+        data: {
+            labels: chartData.category_labels,
+            datasets: [{
+                label: 'Premium',
+                data: chartData.category_values,
+                backgroundColor: '#4F46E5',
+                borderRadius: 12,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => `$${value.toLocaleString()}`
+                    }
+                }
+            }
+        }
+    });
+
+    const monthlyChart = new Chart(monthlyCtx, {
+        type: 'line',
+        data: {
+            labels: chartData.monthly_labels,
+            datasets: [{
+                label: 'Premium',
+                data: chartData.monthly_values,
+                fill: true,
+                borderColor: '#0EA5E9',
+                backgroundColor: 'rgba(14, 165, 233, 0.2)',
+                tension: 0.35,
+                pointRadius: 5,
+                pointBackgroundColor: '#0EA5E9'
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: value => `$${value.toLocaleString()}`
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
